@@ -140,7 +140,7 @@ const Gallery = () => {
 
 * `onResized` : Function - Fired when the gallery was resized / returns event object
 
-  _All functions return an next object_
+  _All functions return the next object_
   ```js
     {
         item: index,   // index of the current item`s position

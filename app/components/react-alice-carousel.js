@@ -1,6 +1,7 @@
 import React from 'react'
 import Swipeable from 'react-swipeable'
 import * as Utils from './utils'
+import * as Views from './views'
 import { propTypes, defaultProps } from './propTypes'
 
 export default class AliceCarousel extends React.PureComponent {
@@ -33,23 +34,19 @@ export default class AliceCarousel extends React.PureComponent {
     this.props.autoPlay && this._play()
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { slideToIndex, duration, fadeOutAnimation } = nextProps
-
-    if (this.props.duration !== duration) {
-      this.setState({ duration })
+  componentDidUpdate(prevProps) {
+    if (this.props.duration !== prevProps.duration) {
+      this.setState({ duration: this.props.duration })
     }
 
-    if (this.props.fadeOutAnimation !== fadeOutAnimation) {
+    if (this.props.fadeOutAnimation !== prevProps.fadeOutAnimation) {
       this.setState({ fadeoutAnimationProcessing: false }, this._resetAnimationProps)
     }
 
-    if (slideToIndex !== this.props.slideToIndex) {
-      this._onSlideToIndexChange(this.state.currentIndex, slideToIndex)
+    if (this.props.slideToIndex !== prevProps.slideToIndex) {
+      this._onSlideToIndexChange(this.state.currentIndex, this.props.slideToIndex)
     }
-  }
 
-  componentDidUpdate(prevProps) {
     if (
       this.props.disableAutoPlayOnAction !== prevProps.disableAutoPlayOnAction ||
       this.props.autoPlayDirection !== prevProps.autoPlayDirection ||
@@ -299,13 +296,7 @@ export default class AliceCarousel extends React.PureComponent {
   _slideIndexInfoComponent = () => {
     const { currentIndex, slides } = this.state
     const { slideIndex, slidesLength } = Utils.getSlideInfo(currentIndex, slides.length)
-    return (
-      <div className="alice-carousel__slide-info">
-        <span className="alice-carousel__slide-info-item">{slideIndex}</span>
-        <span className="alice-carousel__slide-info-item alice-carousel__slide-info-item--separator">/</span>
-        <span className="alice-carousel__slide-info-item">{slidesLength}</span>
-      </div>
-    )
+    return <Views.SlideInfo slidesLength={slidesLength} slideIndex={slideIndex} />
   }
 
   _getEventObject = (state = this.state) => {
