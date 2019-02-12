@@ -16,7 +16,7 @@ export const PrevNextButton = ({ name, disabled, onClick, onMouseEnter, onMouseL
 }
 
 PrevNextButton.propTypes = {
-  name: PropTypes.oneOf(['next, prev']),
+  name: PropTypes.oneOf(['next', 'prev']),
   disabled: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
   onMouseEnter: PropTypes.func.isRequired,

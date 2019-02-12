@@ -18,7 +18,7 @@ export default class AliceCarousel extends React.PureComponent {
     }
 
     this._onTouchMove = this._onTouchMove.bind(this)
-    this.handleOnResize = Utils.debounce(this._windowResizeHandler, 100)
+    this.handleOnResize = Utils.debounce(this._handleOnWindowResize, 100)
   }
 
   componentDidMount() {
@@ -28,7 +28,7 @@ export default class AliceCarousel extends React.PureComponent {
     window.addEventListener('resize', this.handleOnResize)
 
     if (!this.props.keysControlDisabled) {
-      window.addEventListener('keyup', this._keyUpHandler)
+      window.addEventListener('keyup', this._handleOnKeyUp)
     }
 
     this.deviceInfo = Utils.deviceInfo()
@@ -70,8 +70,8 @@ export default class AliceCarousel extends React.PureComponent {
 
     if (this.props.keysControlDisabled !== prevProps.keysControlDisabled) {
       this.props.keysControlDisabled
-        ? window.removeEventListener('keyup', this._keyUpHandler)
-        : window.addEventListener('keyup', this._keyUpHandler)
+        ? window.removeEventListener('keyup', this._handleOnKeyUp)
+        : window.addEventListener('keyup', this._handleOnKeyUp)
     }
   }
 
@@ -79,7 +79,7 @@ export default class AliceCarousel extends React.PureComponent {
     window.removeEventListener('resize', this.handleOnResize)
 
     if (!this.props.keysControlDisabled) {
-      window.removeEventListener('keyup', this._keyUpHandler)
+      window.removeEventListener('keyup', this._handleOnKeyUp)
     }
 
     if (this._autoPlayIntervalId) {
@@ -88,7 +88,7 @@ export default class AliceCarousel extends React.PureComponent {
     }
   }
 
-  _windowResizeHandler = () => {
+  _handleOnWindowResize = () => {
     if (Utils.shouldCallHandlerOnWindowResize(this.deviceInfo)) {
       const { currentIndex, isPlaying } = this.state
 
@@ -107,6 +107,31 @@ export default class AliceCarousel extends React.PureComponent {
         this._onResized()
       })
     }
+  }
+
+  _handleOnKeyUp = (e) => {
+    switch (e.keyCode) {
+      case 32:
+        return this._handleOnSpaceBarClick()
+      case 37:
+        return this._slidePrev()
+      case 39:
+        return this._slideNext()
+    }
+  }
+
+  _handleOnSpaceBarClick = () => {
+    this.props.autoPlay && this._playPauseToggle()
+  }
+
+  _handleOnMouseEnter = () => {
+    if (this.props.stopAutoPlayOnHover) {
+      this.isHovered = true
+    }
+  }
+
+  _handleOnMouseLeave = () => {
+    this.isHovered = false
   }
 
   _onSlideToIndexChange = (currentIndex, slideToIndex) => {
@@ -299,21 +324,6 @@ export default class AliceCarousel extends React.PureComponent {
   _playPauseToggle = () => {
     if (!this.allowAnimation) return
     this.state.isPlaying ? this._pause() : this._play()
-  }
-
-  _keyUpHandler = (e) => {
-    switch (e.keyCode) {
-      case 32:
-        return this._handleOnSpaceBarClick()
-      case 37:
-        return this._slidePrev()
-      case 39:
-        return this._slideNext()
-    }
-  }
-
-  _handleOnSpaceBarClick = () => {
-    this.props.autoPlay && this._playPauseToggle()
   }
 
   _intermediateStateProps = (duration, shouldSkipRecalculation) => {
@@ -545,16 +555,6 @@ export default class AliceCarousel extends React.PureComponent {
     }, duration)
   }
 
-  _handleOnMouseEnter = () => {
-    if (this.props.stopAutoPlayOnHover) {
-      this.isHovered = true
-    }
-  }
-
-  _handleOnMouseLeave = () => {
-    this.isHovered = false
-  }
-
   _setAnimationPropsOnClick = (direction) => {
     const { currentIndex, itemWidth } = this.state
     const fadeOutIndex = Utils.getFadeOutIndexOnClick(currentIndex)
@@ -648,7 +648,7 @@ export default class AliceCarousel extends React.PureComponent {
     const style = Utils.itemStyles(i, this.state, this.animationProps)
     const className = Utils.itemClassName(i, this.state, this.animationProps)
 
-    return <Views.StageItem style={style} className={className} key={i} item={item} />
+    return <Views.StageItem styles={style} className={className} key={`stage-item-${i}`} item={item} />
   }
 
   _renderPlayPauseButton() {

@@ -84,8 +84,8 @@ export const getDotsNavigationLength = (slidesLength, items) => {
   return 0
 }
 
-export const getItemIndexForDotNavigation = (index, slidesLength, itemsLength, isLastIndex) => {
-  if (isLastIndex) {
+export const getItemIndexForDotNavigation = (index, isTheLastIndex, slidesLength, itemsLength) => {
+  if (isTheLastIndex) {
     return slidesLength - itemsLength
   }
   return index * itemsLength

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import * as Utils from '../utils'
 
 export const DotsNavigation = ({ state, onClick, onMouseEnter, onMouseLeave }) => {
-  const { slides, items, currentIndex, infinite } = state
+  const { slides, items, infinite } = state
   const { isNextSlideDisabled } = Utils.itemInfo(state)
   const dotsLength = Utils.getDotsNavigationLength(slides.length, items)
 
@@ -13,13 +13,13 @@ export const DotsNavigation = ({ state, onClick, onMouseEnter, onMouseLeave }) =
       {slides.map((item, i) => {
         if (i < dotsLength) {
           const isTheLastDotIndex = Utils.isTheLastDotIndex(i, infinite, dotsLength)
-          const itemIndex = Utils.getItemIndexForDotNavigation(i, slides.length, items, isTheLastDotIndex)
-          const activeIndex = Utils.getActiveSlideIndex(isNextSlideDisabled, currentIndex, items, slides.length)
+          const itemIndex = Utils.getItemIndexForDotNavigation(i, isTheLastDotIndex, slides.length, items)
+          const activeIndex = Utils.getActiveSlideIndex(isNextSlideDisabled, state)
           const className = activeIndex === i ? ' __active' : ''
 
           return (
             <li
-              key={i}
+              key={`dot-item-${i}`}
               onClick={() => onClick(itemIndex)}
               onMouseEnter={onMouseEnter}
               onMouseLeave={onMouseLeave}
