@@ -37,7 +37,7 @@ const calculateInitialProps = (props, rootComponent) => {
     clones,
     infinite,
     translate3d,
-    stagePadding
+    stagePadding,
   }
 }
 

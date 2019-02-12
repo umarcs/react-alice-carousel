@@ -41,10 +41,10 @@ export const getSlides = (props) => {
 
 export const itemInfo = (props) => {
   const { items, currentIndex, infinite, slides = [] } = props || {}
-  const inactivePrev = infinite === false && currentIndex === 0
-  const inactiveNext = infinite === false && slides.length - items === currentIndex
+  const isPrevSlideDisabled = infinite === false && currentIndex === 0
+  const isNextSlideDisabled = infinite === false && slides.length - items === currentIndex
 
-  return { inactivePrev, inactiveNext }
+  return { isPrevSlideDisabled, isNextSlideDisabled }
 }
 
 export const getStagePadding = (props) => {
@@ -61,8 +61,8 @@ export const getItemWidth = (galleryWidth = 0, totalItems) => {
   return width && items > 0 ? width / items : 0
 }
 
-export const getSlideInfo = (index = 0, slidesLength = 0) => {
-  let slideIndex = index + 1
+export const getSlideInfo = (currentIndex = 0, slidesLength = 0) => {
+  let slideIndex = currentIndex + 1
 
   if (slideIndex < 1) {
     slideIndex = slidesLength
@@ -77,28 +77,31 @@ export const isElement = (element) => {
   return element instanceof Element || element instanceof HTMLDocument
 }
 
-export const getNextItemIndexBeforeTouchEnd = (currentTranslateXPosition, state = {}) => {
-  const { infinite, items = 1, itemWidth = 0, slides = [], stagePadding = {} } = state
+export const getNextItemIndexBeforeTouchEnd = (currentTranslateXPosition, props = {}) => {
+  const { infinite, items = 1, itemWidth = 0, slides = [], stagePadding = {} } = props
   const { paddingLeft, paddingRight } = stagePadding
 
   if (itemWidth <= 0 || items > slides.length) {
     return 0
   }
 
-  let currInd = Math.abs(currentTranslateXPosition / itemWidth) - items
+  let currentIndex = getCurrentIndex(currentTranslateXPosition, itemWidth, items)
 
-  if (infinite) {
-    if (paddingLeft || paddingRight) {
-      currInd -= 1
-    }
+  if (infinite && (paddingLeft || paddingRight)) {
+    currentIndex -= 1
   }
 
-  if (currInd === slides.length) {
+  if (currentIndex === slides.length) {
     return 0
   }
-  if (currInd < 0) {
-    return slides.length + currInd
+
+  if (currentIndex < 0) {
+    return slides.length + currentIndex
   }
 
-  return currInd
+  return currentIndex
+}
+
+export const getCurrentIndex = (currentTranslateXPosition, itemWidth, items) => {
+  return Math.abs(currentTranslateXPosition / itemWidth) - items
 }

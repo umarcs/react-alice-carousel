@@ -5,8 +5,10 @@ export const getDotsLength = (slidesLength, items) => {
   return 0
 }
 
-export const getActiveSlideIndex = (isNextSlideDisabled, index, items, slidesLength) => {
+export const getActiveSlideIndex = (isNextSlideDisabled, props = {}) => {
+  const { currentIndex: index, items, slides = [] } = props
   const currentIndex = index + items
+  const slidesLength = slides.length
 
   if (items === 1) {
     if (currentIndex < items) {
@@ -36,12 +38,20 @@ export const setStartIndex = (childrenLength, index) => {
   return Math.min(startIndex, childrenLength - 1) || 0
 }
 
-export const getFadeOutOffset = (itemIndex, currentIndex, itemWidth) => {
+export const getFadeOutOffsetOnDotClick = (itemIndex, currentIndex, itemWidth) => {
   if (itemIndex < currentIndex) {
     return (currentIndex - itemIndex) * -itemWidth || 0
   } else {
     return (itemIndex - currentIndex) * itemWidth || 0
   }
+}
+
+export const getFadeOutIndexOnClick = (currentIndex) => {
+  return currentIndex === 0 ? 1 : currentIndex + 1
+}
+
+export const getFadeOutOffsetOnClick = (direction, itemWidth) => {
+  return direction === 'next' ? itemWidth : -itemWidth
 }
 
 export const getMaxSWipePosition = (items, itemWidth, slidesLength) => {
@@ -72,6 +82,17 @@ export const getDotsNavigationLength = (slidesLength, items) => {
     return Math.ceil(slidesLength / items) || 0
   }
   return 0
+}
+
+export const getItemIndexForDotNavigation = (index, slidesLength, itemsLength, isLastIndex) => {
+  if (isLastIndex) {
+    return slidesLength - itemsLength
+  }
+  return index * itemsLength
+}
+
+export const isTheLastDotIndex = (index, infinite, dotsLength) => {
+  return infinite === false && index === dotsLength - 1
 }
 
 export const recalculateCurrentSlideIndex = (state = {}) => {

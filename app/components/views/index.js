@@ -1,1 +1,5 @@
 export * from './SlideInfo'
+export * from './StageItem'
+export * from './DotsNavigation'
+export * from './PlayPauseButton'
+export * from './PrevNextButton'
